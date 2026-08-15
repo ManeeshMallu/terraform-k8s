@@ -1,0 +1,7 @@
+# ignore local secret variables
+**/.terraform/*
+**/.terraform.lock.hcl
+*/secrets.tfvars
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup

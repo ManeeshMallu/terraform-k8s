@@ -1,0 +1,31 @@
+stages:
+  - build
+  - push
+
+variables:
+  ECR_REPO: "<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/learning-website"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+build_image:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker build -t $ECR_REPO:$IMAGE_TAG .
+    - docker save $ECR_REPO:$IMAGE_TAG -o image.tar
+  artifacts:
+    paths:
+      - image.tar
+
+push_to_ecr:
+  stage: push
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker load -i image.tar
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO
+    - docker push $ECR_REPO:$IMAGE_TAG
+  only:
+    - main
