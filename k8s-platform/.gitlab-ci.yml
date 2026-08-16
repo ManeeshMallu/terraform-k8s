@@ -60,7 +60,9 @@ apply:
 
 install_argocd:
   stage: install-argocd
-  image: bitnami/kubectl:latest
+  image: 
+    bitnami/kubectl:latest
+    entrypoint: [""]
   script:
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
     - kubectl create namespace argocd --dry-name=client -o yaml | kubectl apply -f -
