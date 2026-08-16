@@ -13,8 +13,9 @@ before_script:
 
 validate:
   stage: validate
-  image: hashicorp/terraform:1.9
-  entrypoint: [""]
+  image: 
+    name: hashicorp/terraform:1.9
+    entrypoint: [""]
   script:
     - terraform fmt -check
     - terraform validate
@@ -24,8 +25,9 @@ validate:
 
 plan:
   stage: plan
-  image: hashicorp/terraform:1.9
-  entrypoint: [""]
+  image: 
+    name: hashicorp/terraform:1.9
+    entrypoint: [""]
   script:
     - terraform plan -out=tfplan
   artifacts:
@@ -38,8 +40,9 @@ plan:
 
 apply:
   stage: apply
-  image: hashicorp/terraform:1.9
-  entrypoint: [""]
+  image: 
+    name: hashicorp/terraform:1.9
+    entrypoint: [""]
   script:
     - terraform apply -auto-approve tfplan
   dependencies:

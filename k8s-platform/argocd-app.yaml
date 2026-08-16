@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/maneeshmallu/terraform-aws-demo.git
+    repoURL: https://github.com/ManeeshMallu/terraform-k8s.git
     targetRevision: main
     path: k8s-platform/manifests
   destination:
