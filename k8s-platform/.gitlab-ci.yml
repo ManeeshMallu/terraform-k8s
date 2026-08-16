@@ -76,8 +76,8 @@ install_argocd:
     - kubectl version --client
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
     - kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-    - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    - kubectl apply -f argocd-app.yaml
+    - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --server-side --force-conflicts
+    - kubectl apply -f argocd-app.yaml --server-side
   needs:
     - job: apply
       artifacts: true
