@@ -69,7 +69,7 @@ install_argocd:
     - chmod +x ./kubectl 
     - mv ./kubectl /usr/local/bin/kubectl
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
-    - kubectl create namespace argocd --dry-name=client -o yaml | kubectl apply -f -
+    - kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
     - kubectl apply -n argocd -f https://githubusercontent.com
     - kubectl apply -f argocd-app.yaml
   needs:
