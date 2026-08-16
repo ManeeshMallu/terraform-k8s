@@ -14,6 +14,7 @@ before_script:
 validate:
   stage: validate
   image: hashicorp/terraform:1.9
+  entrypoint: [""]
   script:
     - terraform fmt -check
     - terraform validate
@@ -24,6 +25,7 @@ validate:
 plan:
   stage: plan
   image: hashicorp/terraform:1.9
+  entrypoint: [""]
   script:
     - terraform plan -out=tfplan
   artifacts:
@@ -36,9 +38,10 @@ plan:
 
 apply:
   stage: apply
-  image: hashicorp/terrafomr:1.9
+  image: hashicorp/terraform:1.9
+  entrypoint: [""]
   script:
-    - terraform apply -var-file="secrets.tfvars" -auto-approve tfplan
+    - terraform apply -auto-approve tfplan
   dependencies:
     - plan
   environment:
