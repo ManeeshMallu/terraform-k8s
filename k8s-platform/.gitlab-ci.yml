@@ -2,6 +2,7 @@ stages:
   - validate
   - plan
   - apply
+  - install-argocd
 
 variables:
   TF_ROOT: k8s-platform
@@ -45,10 +46,29 @@ apply:
     entrypoint: [""]
   script:
     - terraform apply -auto-approve tfplan
+    - echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> apply.env
+  artifacts:
+    reports:
+      dotenv: $TF_ROOT/apply.env
   dependencies:
     - plan
   environment:
     name: production
+  when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+install_argocd:
+  stage: install-argocd
+  image: bitnami/kubectl:latest
+  script:
+    - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
+    - kubectl create namespace argocd --dry-name=client -o yaml | kubectl apply -f -
+    - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    - kubectl apply -f argocd-app.yaml
+  needs:
+    - job: apply
+      artifacts: true
   when: manual
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
