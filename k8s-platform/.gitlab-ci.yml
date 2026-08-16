@@ -64,8 +64,8 @@ install_argocd:
     name: amazon/aws-cli:latest
     entrypoint: [""]
   script:
-    - curl -LO "https://k8s.io(curl -L -s https://k8s.io)/bin/linux/amd64/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/backups-kubectl || true
-    - alias kubectl="kubectl"
+    - cd $TF_ROOT
+    - curl -LO "https://k8s.io(curl -L -s https://k8s.io)/bin/linux/amd64/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
     - kubectl create namespace argocd --dry-name=client -o yaml | kubectl apply -f -
     - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
