@@ -15,6 +15,10 @@ jobs:
           fetch-depth: 0
 
       - name: Mirror to GitLab Destination
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          git remote add gitlab "https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/maneeshh007/terraform-k8s.git"
-          git push gitlab main --force
+          set -euo pipefail
+          git remote remove gitlab 2>/dev/null || true
+          git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git"
+          git push gitlab refs/heads/main:refs/heads/main --force
