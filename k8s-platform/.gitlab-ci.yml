@@ -66,14 +66,14 @@ install_argocd:
   before_script: [] 
   script:
     # 1. DOWNLOAD THE REAL APPLICATION ENGINE BINARY (NOT THE WEBPAGE)
-    - curl -LO "https://k8s.io"
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     
     # 2. Make it executable and place it on your runner system path
     - chmod +x ./kubectl
     - mv ./kubectl /usr/local/bin/kubectl
     
     # 3. Step into your workspace and connect to AWS
-    - cd $TF_ROOT
+    - kubectl version --client
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
     - kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
     - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
