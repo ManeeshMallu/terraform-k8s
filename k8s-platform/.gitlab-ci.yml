@@ -60,17 +60,19 @@ apply:
 
 install_argocd:
   stage: install-argocd
-  image: 
+  image:
     name: amazon/aws-cli:latest
     entrypoint: [""]
-  before_script: []
-  variables:
-    GIT_STRATEGY: clone
+  before_script: [] 
   script:
-    - echo "Executing fresh pipeline run"
+    # 1. DOWNLOAD THE REAL APPLICATION ENGINE BINARY (NOT THE WEBPAGE)
     - curl -LO "https://k8s.io"
-    - chmod +x ./kubectl 
+    
+    # 2. Make it executable and place it on your runner system path
+    - chmod +x ./kubectl
     - mv ./kubectl /usr/local/bin/kubectl
+    
+    # 3. Step into your workspace and connect to AWS
     - cd $TF_ROOT
     - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
     - kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
