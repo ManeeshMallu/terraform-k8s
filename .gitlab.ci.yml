@@ -12,7 +12,6 @@ include:
 
 variables:
   TF_ROOT: k8s-platform
-  ECR_REPO: "<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/learning-website"
   IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
 
 build_and_push:
