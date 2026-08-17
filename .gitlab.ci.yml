@@ -1,31 +1,61 @@
 stages:
+  - validate
+  - plan
+  - apply
+  - install-argocd
   - build
   - push
+  - update-manifest
+
+include:
+  - local: 'k8s-platform/.gitlab-ci.yml'
 
 variables:
+  TF_ROOT: k8s-platform
   ECR_REPO: "<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/learning-website"
   IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
 
-build_image:
+build_and_push:
   stage: build
   image: docker:24
   services:
     - docker:24-dind
   script:
+    - apk add --no-cache aws-cli
     - docker build -t $ECR_REPO:$IMAGE_TAG .
-    - docker save $ECR_REPO:$IMAGE_TAG -o image.tar
-  artifacts:
-    paths:
-      - image.tar
-
-push_to_ecr:
-  stage: push
-  image: docker:24
-  services:
-    - docker:24-dind
-  script:
-    - docker load -i image.tar
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO
     - docker push $ECR_REPO:$IMAGE_TAG
-  only:
-    - main
+  needs:
+    - job: apply
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - Dockerfile
+        - nginx.conf
+        - "**/*.html"
+
+update_manifest:
+  stage: update-manifest
+  image: alpine:latest
+  variables:
+    IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+    script:
+      - apk add --no-cache git
+      - git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git repo
+      - cd repo
+      - sed -i "s|image: .*|image: $ECR_REPO:$IMAGE_TAG|" k8s-platform/manifests/website-deployment.yaml
+      - git config user.email "ci@pipeline.local"
+      - git config user.name "GitLab CI"
+      - git commit -am "Update image to $IMAGE_TAG [skip ci]"
+      - git push origin main
+    needs:
+      - job: apply
+        artifacts: true
+      - build_and_push
+    rules:
+      - if: '$CI_COMMIT_BRANCH = "main"'
+        changes:
+          - Dockerfile
+          - nginx.conf
+          - "**/*.html"

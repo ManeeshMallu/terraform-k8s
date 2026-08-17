@@ -39,7 +39,7 @@ module "eks" {
 }
 
 resource "aws_ecr_repository" "website" {
-  name = "learning-website"
+  name = var.ecr_repo_name
 }
 
 output "ecr_repository_url" {

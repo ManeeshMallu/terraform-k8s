@@ -18,11 +18,15 @@ validate:
     name: hashicorp/terraform:1.10
     entrypoint: [""]
   script:
+    - cd $TF_ROOT
+    - terraform init
     - terraform fmt -check
     - terraform validate
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - k8s-platform/**/*.tf
 
 plan:
   stage: plan
@@ -30,6 +34,8 @@ plan:
     name: hashicorp/terraform:1.10
     entrypoint: [""]
   script:
+    - cd $TF_ROOT
+    - terraform init
     - terraform plan -out=tfplan
   artifacts:
     paths:
@@ -38,6 +44,8 @@ plan:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - k8s-platform/**/*.tf
 
 apply:
   stage: apply
@@ -47,6 +55,7 @@ apply:
   script:
     - terraform apply -auto-approve tfplan
     - echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> apply.env
+    - echo "ECR_REPO=$(terraform output -raw ecr_repository_url)" >> apply.env
   artifacts:
     reports:
       dotenv: $TF_ROOT/apply.env

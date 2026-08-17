@@ -9,3 +9,9 @@ variable "cluster_name" {
   type        = string
   default     = "learning-cluster"
 }
+
+variable "ecr_repo_name" {
+  description = "ECR repository name"
+  type        = string
+  default     = "learning-website"
+}
