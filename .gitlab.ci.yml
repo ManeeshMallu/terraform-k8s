@@ -43,7 +43,8 @@ update_manifest:
       - apk add --no-cache git
       - git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git repo
       - cd repo
-      - "sed -i \"s|image: .*|image: $ECR_REPO:$IMAGE_TAG|\" k8s-platform/manifests/website-deployment.yaml"
+      - |
+        sed -i "s|image: .*|image: $ECR_REPO:$IMAGE_TAG|" k8s-platform/manifests/website-deployment.yaml
       - git config user.email "ci@pipeline.local"
       - git config user.name "GitLab CI"
       - git commit -am "Update image to $IMAGE_TAG [skip ci]"
