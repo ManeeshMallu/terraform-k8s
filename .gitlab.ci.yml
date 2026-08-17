@@ -8,7 +8,7 @@ stages:
   - update-manifest
 
 include:
-  - local: 'k8s-platform/.gitlab-ci.yml'
+  - local: 'k8s-platform/.gitlab-ci-infra.yml'
 
 variables:
   TF_ROOT: k8s-platform

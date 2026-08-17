@@ -18,8 +18,6 @@ validate:
     name: hashicorp/terraform:1.10
     entrypoint: [""]
   script:
-    - cd $TF_ROOT
-    - terraform init
     - terraform fmt -check
     - terraform validate
   rules:
@@ -34,8 +32,6 @@ plan:
     name: hashicorp/terraform:1.10
     entrypoint: [""]
   script:
-    - cd $TF_ROOT
-    - terraform init
     - terraform plan -out=tfplan
   artifacts:
     paths:
