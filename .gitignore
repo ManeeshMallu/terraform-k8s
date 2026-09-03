@@ -1,4 +1,5 @@
 # ignore local secret variables
+.env
 **/.terraform/*
 **/.terraform.lock.hcl
 */secrets.tfvars

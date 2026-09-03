@@ -413,6 +413,19 @@ route:
 
 receivers:
   - name: 'default'
+
+route:
+  receiver: 'ai-triage'
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+
+receivers:
+  - name: 'ai-triage'
+    webhook_configs:
+	  - url: 'http://localhost:5001/alert'
+	    send_resolved: true
 ALERTMGR
 
 docker run -d --name alertmanager --network monitoring -p 9093:9093 \
