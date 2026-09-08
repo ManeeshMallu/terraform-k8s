@@ -33,6 +33,12 @@ plan:
     entrypoint: [""]
   script:
     - terraform plan -out=tfplan
+    - echo "--- CURRENT RUNNER DIRECTORY ---"
+    - pwd
+    - echo "--- WHERE IS THE TFPLAN? ---"
+    - find /builds -name "tfplan"
+    - echo "--- WHAT IS VALUE OF TF_ROOT? ---"
+    - echo $TF_ROOT
   artifacts:
     paths:
       - $TF_ROOT/tfplan
