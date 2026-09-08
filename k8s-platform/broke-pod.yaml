@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: broken-app-pod
+  namespace: default
+spec:
+  containers:
+  - name: error-container
+    image: alpine:latest
+    command: ["sh", "-c", "echo 'Booting up infra'; sleep 2; exit 1"]
