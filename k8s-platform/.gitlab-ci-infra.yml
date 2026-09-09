@@ -25,6 +25,7 @@ validate:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         - k8s-platform/**/*.tf
+        - .gitlab.ci.yml
 
 plan:
   stage: plan
@@ -48,6 +49,7 @@ plan:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         - k8s-platform/**/*.tf
+        - .gitlab.ci.yml
 
 apply:
   stage: apply

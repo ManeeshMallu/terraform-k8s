@@ -42,6 +42,8 @@ resource "aws_ecr_repository" "website" {
   name = var.ecr_repo_name
 }
 
+# outputs
+
 output "ecr_repository_url" {
   value = aws_ecr_repository.website.repository_url
 }
