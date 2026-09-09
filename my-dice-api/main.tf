@@ -40,7 +40,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 # Define the lambda function
 resource "aws_lambda_function" "dice_lambda" {
   filename = data.archive_file.lambda_zip.output_path
-  source_code_hash = data.archive_file. lambda_zip.output_base64sha256
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   function_name = "DiceRollHandler"
   role = aws_iam_role.lambda_role.arn
   handler = "dice.handler"
