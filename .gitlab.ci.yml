@@ -24,9 +24,12 @@ build_and_push:
   script:
     - apk add --no-cache aws-cli
     - |
-      if [ -z "$ECR_REPO"]; then
+      if [ -z "$ECR_REPO" ]; then
         echo "Apply stage was skipped. Querying AWS for ECR repository URL..."
-        ECR_REPO=$(aws ecr describe-repositories --repository-names learning-website --query 'repositories[0].repositoryUri' --output text 2>/dev/null || echo "$FALLBACK_ECR_REPO")
+        ACTUAL_REPO_NAME="learning-website" 
+        STATIC_FALLBACK="://amazonaws.com{ACTUAL_REPO_NAME}"
+
+        ECR_REPO=$(aws ecr describe-repositories --repository-names "${ACTUAL_REPO_NAME}" --query 'repositories[0].repositoryUri' --output text 2>/dev/null || echo "$FALLBACK_ECR_REPO")
       fi
     - echo "Using ECR repository -> $ECR_REPO"
     - docker build -t $ECR_REPO:$IMAGE_TAG .
