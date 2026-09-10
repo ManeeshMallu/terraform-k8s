@@ -42,8 +42,8 @@ update_manifest:
     IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
   script:
     - apk update
-    - apk add --no-cache --upgrade expat python3 py3-pip
-    - aws --version || pip3 install --no-cache-dir --break-system-packages awscli
+    - apk add --no-cache git python3 py3-pip
+    - pip3 install --no-cache-dir --break-system-packages awscli
     - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
     - export ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/learning-website"
     - git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git repo
