@@ -21,10 +21,11 @@ build_and_push:
   services:
     - docker:24-dind
   before_script: []
+  variables:
+    STATIC_ECR_URL: '://amazonaws.com'
   script:
     - apk add --no-cache aws-cli
-    - BASELINE_URL="://amazonaws.com"
-    - ECR_REPO=${ECR_REPO:-$BASELINE_URL}
+    - ECR_REPO=${ECR_REPO:-$STATIC_ECR_URL}
     - echo "Using ECR repository -> $ECR_REPO"
     - docker build -t $ECR_REPO:$IMAGE_TAG .
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
@@ -38,10 +39,10 @@ update_manifest:
   before_script: []
   variables:
     IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+    STATIC_ECR_URL: '://amazonaws.com'
   script:
     - apk add --no-cache git aws-cli
-    - BASELINE_URL="://amazonaws.com"
-    - ECR_REPO=${ECR_REPO:-$BASELINE_URL}
+    - ECR_REPO=${ECR_REPO:-$STATIC_ECR_URL}
     - git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git repo
     - cd repo
     - |
