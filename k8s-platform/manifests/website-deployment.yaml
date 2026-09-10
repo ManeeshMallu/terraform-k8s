@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: website
-          image: nginx:latest
+          image: 765607524783.dkr.ecr.us-east-1.amazonaws.com/learning-website:562dc144
           ports:
             - containerPort: 8080
           readinessProbe:
