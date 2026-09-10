@@ -21,12 +21,11 @@ build_and_push:
   services:
     - docker:24-dind
   before_script: []
-  variables:
-    STATIC_ECR_URL: '://amazonaws.com'
   script:
     - apk add --no-cache aws-cli
-    - ECR_REPO=${ECR_REPO:-$STATIC_ECR_URL}
-    - echo "Using ECR repository -> $ECR_REPO"
+    - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    - export ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/learning-website"
+    - echo "ECR_REPO=$ECR_REPO" >> build.env
     - docker build -t $ECR_REPO:$IMAGE_TAG .
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
     - docker push $ECR_REPO:$IMAGE_TAG
@@ -39,10 +38,10 @@ update_manifest:
   before_script: []
   variables:
     IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
-    STATIC_ECR_URL: '://amazonaws.com'
   script:
     - apk add --no-cache git aws-cli
-    - ECR_REPO=${ECR_REPO:-$STATIC_ECR_URL}
+    - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    - export ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/learning-website"
     - git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/maneeshh007/terraform-k8s.git repo
     - cd repo
     - |
@@ -53,6 +52,6 @@ update_manifest:
     - git push origin main
   needs:
     - job: build_and_push
-      artifacts: false
+      artifacts: true
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
